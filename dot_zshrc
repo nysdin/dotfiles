@@ -4,6 +4,7 @@ eval "$(direnv hook zsh)"
 # export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 # export PKG_CONFIG_PATH="/usr/local/opt/imagemagick@6/lib/pkgconfig"
 export PATH="/usr/local/sbin:$PATH"
+export VISUAL="vim"
 export EDITOR="vim"
 
 # AWS Profile
