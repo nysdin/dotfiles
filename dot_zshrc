@@ -1,0 +1,173 @@
+# eval "$(rbenv init -)"
+eval "$(nodenv init -)"
+eval "$(direnv hook zsh)"
+# export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+# export PKG_CONFIG_PATH="/usr/local/opt/imagemagick@6/lib/pkgconfig"
+export PATH="/usr/local/sbin:$PATH"
+export EDITOR="vim"
+
+# AWS Profile
+export AWS_PROFILE=port
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Go
+export PATH=${HOME}/go/bin:${PATH}
+
+# 1pasword
+export SSH_AUTH_SOCK=~/.1password/agent.sock
+
+
+# asdf
+. "$HOME/.asdf/asdf.sh"
+fpath=(${ASDF_DIR}/completions $fpath)
+autoload -Uz compinit && compinit
+
+# kube-ps1
+source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+PS1='$(kube_ps1)'$PS1
+
+# autoload 
+autoload bashcompinit && bashcompinit
+complete -C '/usr/local/bin/aws_completer' aws 
+
+# setopt
+## cd を省略
+setopt auto_cd
+
+# antibody
+source <(antibody init)
+antibody bundle < ~/.zsh_plugins.txt
+autoload -U compinit && compinit
+
+# see details for `brew info readline`
+export LDFLAGS="-L/usr/local/opt/readline/lib"
+export CPPFLAGS="-I/usr/local/opt/readline/include"
+export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
+export COMPOSE_FILE=docker-compose.yml
+setopt no_beep
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+
+## command histroy ##
+# fzf使いたくなったら以下参考
+# https://mogulla3.tech/articles/2021-09-06-search-command-history-with-incremental-search
+export HISTFILE=$HOME/.zsh_history
+export HISTSIZE=100000        # メモリ上の履歴リストに保存されるイベントの最大数
+export SAVEHIST=100000        # 履歴ファイルに保存されるイベントの最大数
+
+setopt hist_expire_dups_first # 履歴を切り詰める際に、重複する最も古いイベントから消す
+setopt hist_ignore_all_dups   # 履歴が重複した場合に古い履歴を削除する
+setopt hist_ignore_dups       # 前回のイベントと重複する場合、履歴に保存しない
+setopt hist_save_no_dups      # 履歴ファイルに書き出す際、新しいコマンドと重複する古いコマンドは切り捨てる
+setopt share_history          # 全てのセッションで履歴を共有する
+
+# peco
+function peco-select-history() {
+  BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+## ghqとの連携。ghqの管理化にあるリポジトリを一覧表示する。ctrl - ]にバインド。
+# https://zenn.dev/oreo2990/articles/13c80cf34a95af
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --prompt="repositories >" --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src
+
+# ブランチを簡単切り替え。git switch lbで実行できる
+alias -g lb='`git branch | peco --prompt "GIT BRANCH>" | head -n 1 | sed -e "s/^\*\s*//g"`'
+
+
+# dockerコンテナに入る。deで実行できる
+alias de='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash'
+
+
+# ls
+alias ls="ls -G"
+alias ll="ls -lG"
+alias la="ls -laG"
+
+# git
+alias g='git'
+alias ga='git add'
+alias gc='git commit'
+alias gcmsg='git commit -m'
+alias gd='git diff'
+alias gs='git status'
+alias gpush='git push'
+alias gfpush='git push -f'
+alias gpull='git pull'
+alias gb='git branch'
+alias gst='git status'
+alias gco='git checkout'
+alias gf='git fetch'
+alias gsw='git switch'
+alias gr='git restore'
+
+# bundle
+alias b='bundle'
+alias be='bundle exec'
+alias bx='bundle exec'
+alias bi='bundle install'
+alias bo='bundle outdated'
+alias bu='bundle update'
+
+# rails
+alias r='bundle exec rails'
+alias rc='bundle exec rails c'
+alias rs='bundle exec rails s'
+alias rr='bundle exec rails routes'
+alias rdm='bundle exec rails db:migrate'
+alias rdms='bundle exec rails db:migrate:status'
+alias rds='rake db:seed'
+alias rdsf='rake db:seed_fu'
+
+
+# docker
+alias dkr='docker'
+alias dc='docker-compose'
+
+# terraform
+alias tf='terraform'
+
+# terragrunt
+alias tg='terragrunt'
+
+# kubernetes
+alias k=kubectl
+
+## alias ##
+
+# syntax highlight
+source /Users/shini.yanada/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# auto compplete
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+
+# time command
+TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
+export PATH="/usr/local/opt/openssl@3/bin:$PATH"
+
+# aws_complete
+## https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+complete -C '$(which aws_completer)' aws
