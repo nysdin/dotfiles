@@ -1,0 +1,20 @@
+[user]
+	name = nysdin
+	email = "40791830+nysdin@users.noreply.github.com"
+
+[core]
+	editor = vim
+	# gitの改行コードをLFに統一
+	autocrlf = input
+
+# https://qiita.com/awakia/items/6aaea1ffecba725be601
+[push]
+	default = current
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+{{ if .chezmoi.hostname | regexMatch "^PT" -}}
+[ghq]
+	root = ~/port
+{{ end -}}
