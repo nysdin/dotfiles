@@ -24,6 +24,3 @@ killall SystemUIServer
 
 # Trackpad
 defaults write com.apple.AppleMultitouchTrackpad "FirstClickThreshold" -int "0"
-
-# Appearance
-defaults write -g NSRequiresAquaSystemAppearance -bool Yes

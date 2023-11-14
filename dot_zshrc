@@ -46,18 +46,22 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 export LSCOLORS=Gxfxcxdxbxegedabagacad
 
-## command histroy ##
-# fzf使いたくなったら以下参考
-# https://mogulla3.tech/articles/2021-09-06-search-command-history-with-incremental-search
+# history
+## fzf使いたくなったら以下参考
+## https://mogulla3.tech/articles/2021-09-06-search-command-history-with-incremental-search
+alias history='history -t "%F %T"'
+
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=1000000        # メモリ上の履歴リストに保存されるイベントの最大数
 export SAVEHIST=1000000        # 履歴ファイルに保存されるイベントの最大数
+export HISTIGNORE=ls:history   # 履歴から除外するコマンド
 
-setopt hist_expire_dups_first # 履歴を切り詰める際に、重複する最も古いイベントから消す
-setopt hist_ignore_all_dups   # 履歴が重複した場合に古い履歴を削除する
-setopt hist_ignore_dups       # 前回のイベントと重複する場合、履歴に保存しない
-setopt hist_save_no_dups      # 履歴ファイルに書き出す際、新しいコマンドと重複する古いコマンドは切り捨てる
-setopt share_history          # 全てのセッションで履歴を共有する
+setopt hist_expire_dups_first  # 履歴を切り詰める際に、重複する最も古いイベントから消す
+setopt hist_ignore_all_dups    # 履歴が重複した場合に古い履歴を削除する
+setopt hist_ignore_dups        # 前回のイベントと重複する場合、履歴に保存しない
+setopt hist_save_no_dups       # 履歴ファイルに書き出す際、新しいコマンドと重複する古いコマンドは切り捨てる
+setopt share_history           # 全てのセッションで履歴を共有する
+setopt extended_history        # 履歴に実行時間も保存する
 
 # peco
 function peco-select-history() {
@@ -68,8 +72,8 @@ function peco-select-history() {
 zle -N peco-select-history
 bindkey '^r' peco-select-history
 
-## ghqとの連携。ghqの管理化にあるリポジトリを一覧表示する。
-# https://zenn.dev/oreo2990/articles/13c80cf34a95af
+# ghqとの連携。ghqの管理化にあるリポジトリを一覧表示する。
+## https://zenn.dev/oreo2990/articles/13c80cf34a95af
 function peco-src () {
   local selected_dir=$(ghq list -p | peco --prompt="repositories >" --query "$LBUFFER")
   if [ -n "$selected_dir" ]; then
@@ -142,7 +146,7 @@ alias tg='terragrunt'
 alias k=kubectl
 
 # syntax highlight
-source /Users/shini.yanada/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # auto compplete
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
