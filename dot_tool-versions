@@ -5,7 +5,7 @@ kubectl latest
 ecspresso latest
 jq latest
 sops latest
-ruby latest
+ruby 3.2.2 
 helm latest
-ecspresso latest
 terraform latest
+terragrunt latest
